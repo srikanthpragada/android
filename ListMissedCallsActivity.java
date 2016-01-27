@@ -19,18 +19,28 @@ public class ListMissedCallsActivity extends Activity {
 		TextView tv = (TextView) findViewById(R.id.textMissedCalls);
 		tv.setText("");
 
-		final String sortOrder = CallLog.Calls.DATE + " DESC";
+		// final String sortOrder = CallLog.Calls.DATE + " DESC";
 		Cursor cursor = null;
 		try {
-			cursor = getContentResolver().query(
-					Uri.parse("content://call_log/calls"), null, null, null,
-					sortOrder);
+			cursor =getContentResolver().query(
+					CallLog.Calls.CONTENT_URI,
+					null,
+					CallLog.Calls.TYPE  + " = " + CallLog.Calls.MISSED_TYPE ,
+					null,
+					CallLog.Calls.DEFAULT_SORT_ORDER);
+
 			if (cursor != null) {
 				Log.d("MissedCalls","Got Calls Details");
 				while (cursor.moveToNext()) {
 					String callNumber = cursor
 							.getString(cursor
 									.getColumnIndex(CallLog.Calls.NUMBER));
+
+					String name  = cursor
+							.getString(cursor
+									.getColumnIndex(CallLog.Calls.CACHED_NAME));
+
+					// no. of millisecond since 1-1-1970
 					String callDate = cursor
 							.getString(cursor
 									.getColumnIndex(CallLog.Calls.DATE));
@@ -41,9 +51,8 @@ public class ListMissedCallsActivity extends Activity {
 							.getString(cursor
 									.getColumnIndex(CallLog.Calls.TYPE));
 
-					if (Integer.parseInt(callType) == CallLog.Calls.MISSED_TYPE) {
-						tv.append( "Number : "  + callNumber + "\nAt : " + d.toString() + "\n\n");
-					}
+     				tv.append( "Number : "  + callNumber + " (" + name + ")\nAt : " + d.toString() + "\n\n");
+
 				}
 			} else
 				Log.d("MissedCalls", "No missed calss!");
