@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Andriod"
-            android:id="@+id/rbAndroid" />
+            android:id="@+id/rbAndroid" /> 
 
         <RadioButton
             android:layout_width="wrap_content"
