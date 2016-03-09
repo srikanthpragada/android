@@ -33,8 +33,8 @@ public class ListSongsActivity extends Activity {
 			}
 
 	 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1  , names);
-		    ListView listCourses = (ListView) this.findViewById( R.id.listAlbums);
-		    listCourses.setAdapter(adapter);
+		    ListView listSongs = (ListView) this.findViewById( R.id.listSongs);
+		    listSongs.setAdapter(adapter);
 			
 		} catch (Exception ex) {
 			Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
