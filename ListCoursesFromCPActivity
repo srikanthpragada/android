@@ -1,0 +1,92 @@
+package com.st.storage;
+
+import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+
+public class ListCourseFromCPActivity extends Activity {
+	@Override
+	public void onCreate(Bundle  data) {
+		super.onCreate(data);
+		setContentView(R.layout.activity_list_course_rows);
+		try {
+
+			Cursor courses = getContentResolver().query
+					 (Uri.parse("content://com.st.courses"),
+  				      null,null,null,null);
+
+			String from [] = { "name", "fee","duration"};
+			int to [] = { R.id.textName, R.id.textFee, R.id.textDuration};
+			
+			SimpleCursorAdapter ca  = new SimpleCursorAdapter(
+					this,R.layout.course_row, courses,from,to
+					);
+			
+		    ListView listCourses = (ListView) this.findViewById( R.id.listCourses);
+		    listCourses.setAdapter(ca);
+			
+		} catch (Exception ex) {
+			Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
+}
+
+Layout - activity_list_course_rows.xml
+=====================================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/listCourses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>
+
+Layout- course_row.xml
+======================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="1dp"
+    android:orientation="vertical"
+    android:paddingBottom="20px" >
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/textName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textFee" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/textDuration" />
+
+     <!--<view-->
+         <!--android:background="@color/colorRed"-->
+         <!--android:layout_height ="1dp"-->
+         <!--android:layout_width="match_parent"/>-->
+
+</LinearLayout>
+
