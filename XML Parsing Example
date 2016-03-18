@@ -1,0 +1,281 @@
+XMl Document  - raw/schedule.xml
+=================================
+<?xml version="1.0" encoding="utf-8" ?>
+<schedule>
+    <batch duration="35" enddate="06-MAY" lfee="500" material="Printed Course Material" prereq="Computer Fundas"
+        stdate="28-MAR" subject="C Language" syllabuslink="c/syllabus.aspx" tfee="2500"
+        timing="05:00-06:00 PM" />
+    <batch duration="28" enddate="03-May" lfee="500"
+        material="Printed Course Material" prereq="C Language" softwares="" stdate="01-APR" subject="Java SE 8.0 (Core Java)"
+        syllabuslink="javase/syllabus.aspx" tfee="3500" timing="06:00-07:30 PM" />
+    <batch duration="28" enddate="03-MAY" lfee="0"
+        material="Printed Course Material" prereq="Java SE and SQL" softwares="" stdate="01-APR" subject="Struts 2 + Hibernate + Spring"
+        syllabuslink="javaee/frameworks.aspx" tfee="2500" timing="07:30-08:30 PM" />
+</schedule>
+
+Batch.java
+==========
+package com.st.advancedtopics;
+
+public class Batch {
+    private String subject, startDate, timings, link;
+
+    public Batch(String course, String startDate, String timings, String link) {
+        this.subject = course;
+        this.link = link;
+        this.startDate = startDate;
+        this.timings = timings;
+    }
+
+    public Batch() {
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+    public String getTimings() {
+        return timings;
+    }
+
+    public void setTimings(String timings) {
+        this.timings = timings;
+    }
+
+    @Override
+    public String toString() {
+        return  subject + " : "  + startDate + " : " + timings + " : " + link;
+    }
+}
+
+
+ScheduleParser.Java
+=====================
+package com.st.advancedtopics;
+
+import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class ScheduleParser {
+    private static final String ns = null;
+    public List<Batch> parse(InputStream in) throws XmlPullParserException, IOException {
+        try {
+            XmlPullParser parser = Xml.newPullParser();
+            parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+            parser.setInput(in, null);
+            parser.nextTag();
+            return readSchedule(parser);
+        } finally {
+            in.close();
+        }
+    }
+
+    private List<Batch> readSchedule(XmlPullParser parser) throws XmlPullParserException, IOException {
+        ArrayList<Batch> batches = new ArrayList<>();
+        parser.require(XmlPullParser.START_TAG, null, "schedule");
+
+        while (parser.next() != XmlPullParser.END_DOCUMENT) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+            // Starts by looking for the entry tag
+            if (name.equals("batch")) {
+                batches.add( readBatch(parser));
+            }
+        }
+        return batches;
+    }
+
+    private Batch readBatch(XmlPullParser parser) throws XmlPullParserException, IOException {
+        Batch b = new Batch();
+        b.setSubject(parser.getAttributeValue(null, "subject"));
+        b.setLink(parser.getAttributeValue(null, "syllabuslink"));
+        b.setStartDate(parser.getAttributeValue(null, "stdate"));
+        b.setTimings(parser.getAttributeValue(null,"timing"));
+        return b;
+    }
+}
+
+BatchAdapter.java
+=================
+package com.st.advancedtopics;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.TextView;
+import java.util.List;
+public class BatchesAdapter extends BaseAdapter {
+    private Context ctx;
+    private List<Batch> batches;
+    public BatchesAdapter(Context ctx, List<Batch> batches) {
+        this.ctx = ctx;
+        this.batches = batches;
+    }
+
+    public int getCount() {
+        return batches.size();
+    }
+
+    public Object getItem(int position) {
+        return batches.get(position);
+    }
+
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(ctx);
+            convertView = inflater.inflate(R.layout.batch, null);
+            Button btnDetails = (Button) convertView
+                    .findViewById(R.id.btnDetails);
+            final Batch batch = batches.get(position);
+            // Subject
+            TextView textSubject = (TextView) convertView
+                    .findViewById(R.id.textSubject);
+            textSubject.setText(batch.getSubject());
+            // StartDate
+            TextView textStartDate = (TextView) convertView
+                    .findViewById(R.id.textStartDate);
+            textStartDate.setText(batch.getStartDate());
+
+            // Timings
+            TextView textTimings = (TextView) convertView
+                    .findViewById(R.id.textTimings);
+
+            textTimings.setText(batch.getTimings());
+
+            btnDetails.setOnClickListener(new OnClickListener() {
+
+                public void onClick(View v) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse("http://www.srikanthtechnologies.com/" + batch.getLink()));
+                    ctx.startActivity(i);
+                }
+
+            });
+        }
+        return convertView;
+    }
+}
+
+
+ScheduleActivity.java
+=====================
+package com.st.advancedtopics;
+
+import android.app.ListActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ScheduleActivity extends ListActivity {
+    ListView listBatches;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        listBatches =  getListView();
+
+        // Get inputstream from xml file
+        InputStream file = this.getResources().openRawResource(R.raw.schedule);
+
+        try {
+            ScheduleParser parser = new ScheduleParser();
+            List<Batch> batches = parser.parse(file);
+
+            BatchesAdapter adapter = new BatchesAdapter(this,batches);
+            listBatches.setAdapter(adapter);
+
+
+        }catch(Exception ex) {
+            Log.d("AdvancedTopics", "Error ->" + ex.getMessage());
+        }
+
+    }
+}
+
+batch.xml (Layout for custom adapter)
+=====================================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+
+        android:id="@+id/textSubject"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+
+        android:id="@+id/textStartDate"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+
+        android:id="@+id/textTimings"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get Details"
+        android:id="@+id/btnDetails"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>
+
+
+
+
+
