@@ -1,0 +1,212 @@
+FirstFragment.java
+====================
+package com.st.advancedtopics;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+
+
+public class FirstFragment extends Fragment {
+
+    public FirstFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("AdvancedTopics", "onCreate() in FirstFragment");
+    }
+
+    public void processButton() {
+        FragmentManager fm = this.getActivity().getFragmentManager();
+        SecondFragment sf = (SecondFragment) fm.findFragmentById(R.id.secondFragment);
+        sf.showDate();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_first, container, false);
+        Button btn = (Button) view.findViewById(R.id.btnPushMe);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("AdvancedTopics","You pushed the button!");
+                processButton();
+            }
+        });
+
+        return  view;
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("AdvancedTopics", "onAttach() in FirstFragment");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("AdvancedTopics", "onDetach() in FirstFragment");
+    }
+
+}
+
+fragment_first.xml
+==================
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.st.advancedtopics.FirstFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="First Fragment" />
+
+    <Button
+        android:id="@+id/btnPushMe"
+        android:text="Push Me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>
+
+
+SecondFragment.java
+===================
+package com.st.advancedtopics;
+
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.Date;
+
+
+public class SecondFragment extends Fragment {
+    TextView textMessage;
+    public SecondFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("AdvancedTopics", "onCreate() in SecondFragment");
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_second, container, false);
+        textMessage = (TextView) view.findViewById(R.id.textMessage);
+        return  view;
+    }
+
+    public void showDate() {
+        textMessage.setText( new Date().toString());
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("AdvancedTopics", "onAttach() in SecondFragment");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("AdvancedTopics", "onDetach() in SecondFragment");
+    }
+
+}
+
+fragment_second.xml
+===================
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.st.advancedtopics.SecondFragment">
+
+
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="" />
+
+
+</FrameLayout>
+
+
+FragementsDemoActivity.java
+=============================
+
+package com.st.advancedtopics;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class FragmentsDemoActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fragments_demo);
+    }
+}
+
+
+activity_fragements_demo.xml
+=============================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.st.advancedtopics.FragmentsDemoActivity">
+
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.st.advancedtopics.FirstFragment"
+        android:id="@+id/firstFragment"
+        android:layout_gravity="center_horizontal" />
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.st.advancedtopics.SecondFragment"
+        android:id="@+id/secondFragment"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
+
+
+
