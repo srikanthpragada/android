@@ -1,0 +1,136 @@
+course.xml
+===============
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvCourseName"
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:layout_height="wrap_content" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/cbSelected" />
+
+
+</LinearLayout>
+
+Course.java
+===========
+package com.st.advancedtopics;
+
+public class Course {
+
+    private String name;
+    private int qty,fee;
+    private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public Course() {
+    }
+
+    public Course(String name, int fee, int qty) {
+        this.qty = qty;
+        this.name = name;
+        this.fee = fee;
+    }
+
+    public int getFee() {
+        return fee;
+    }
+
+    public void setFee(int fee) {
+        this.fee = fee;
+    }
+
+    public int getQty() {
+
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+
+CourseAdapter.java
+===================
+package com.st.advancedtopics;
+
+import android.app.Activity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.List;
+
+
+public class CoursesAdapter extends ArrayAdapter<Course> {
+
+    private List<Course> courses;
+    private Activity context;
+
+    public CoursesAdapter(Activity context, List<Course> courses) {
+        super(context, R.layout.course, courses);
+        this.context = context;
+        this.courses = courses;
+    }
+
+
+    @Override
+    public View getView(int position, View convertView, final ViewGroup parent) {
+        View view = null;
+        if (convertView == null) {
+            LayoutInflater inflator = context.getLayoutInflater();
+            view = inflator.inflate(R.layout.course, null);
+            TextView tv = (TextView) view.findViewById(R.id.tvCourseName);
+            final CheckBox cb = (CheckBox) view.findViewById(R.id.cbSelected);
+
+            Course c = courses.get(position);
+            cb.setTag(c); // model associated with checkbox
+            tv.setText(c.getName());
+
+            cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Course c  = (Course)  buttonView.getTag();
+                    c.setSelected( buttonView.isChecked());
+                    CoursesAdapterActivity activity = (CoursesAdapterActivity) context;
+                    activity.updateTotal();
+                }
+            });
+        }
+        else
+        {
+            view = convertView;
+        }
+        return view;
+    }
+
+}
