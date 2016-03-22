@@ -1,0 +1,152 @@
+package com.srikanthpragada.demo;
+
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+
+public class FragmentsTransactionsDemoActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_fragments_transactions_demo);
+    }
+
+    public void addFragment(View v) {
+
+        Fragment f = new FirstFragment();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction  ft = fm.beginTransaction();
+        ft.add(R.id.fragmentLayout, f, "First");
+        ft.commit();
+
+    }
+
+    public void removeFragment(View v) {
+
+        FragmentManager fm = getFragmentManager();
+        Fragment f =  fm.findFragmentByTag("First");
+        FragmentTransaction  ft = fm.beginTransaction();
+        ft.remove(f);
+        ft.commit();
+
+    }
+}
+
+
+activity_fragments_transactions_demo.xml
+========================================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FragmentsTransactionsDemoActivity">
+
+    <LinearLayout
+        android:id="@+id/fragmentLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Fragment"
+            android:onClick="addFragment"
+            android:id="@+id/btnAdd" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove Fragment"
+            android:onClick="removeFragment"
+            android:id="@+id/btnRemove" />
+    </LinearLayout>
+</LinearLayout>
+
+
+FirstFragment.java
+=================
+package com.srikanthpragada.demo;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+public class FirstFragment extends Fragment {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("Course","OnCreateView()");
+        // Inflate the layout for this fragment
+        View  view =  inflater.inflate(R.layout.fragment_first, container,false);
+
+        return view;
+    }
+}
+
+Layout - fragment_first.xml
+==========================
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.srikanthpragada.demo.FirstFragment">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="First Fragment" />
+
+</FrameLayout>
+
+
+SecondFragment.java
+====================
+package com.srikanthpragada.demo;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class SecondFragment extends Fragment {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("Course", "OnCreateView()");
+        // Inflate the layout for this fragment
+        View  view =  inflater.inflate(R.layout.fragment_second, container,false);
+
+        return view;
+    }
+}
+
+Layout - fragment_second.xml
+============================
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.srikanthpragada.demo.FirstFragment">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Second Fragment" />
+</FrameLayout>
