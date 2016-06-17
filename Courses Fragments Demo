@@ -1,0 +1,226 @@
+CouseFragment.java
+====================
+package com.st.advancedtopics;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RadioGroup;
+
+public class CoursesFragment extends Fragment implements RadioGroup.OnCheckedChangeListener {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_courses, container, false);
+        RadioGroup rgCourses = (RadioGroup) v.findViewById(R.id.rgCourses);
+        rgCourses.setOnCheckedChangeListener(this);
+
+        return v;
+
+    }
+
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+        String desc = "";
+        switch (checkedId) {
+            case R.id.rbAndroid:
+                desc = "Android Programming ..";
+                break;
+            case R.id.rbJava:
+                desc = "Java SE and EE ..";
+                break;
+            case R.id.rbOracle:
+                desc = "Oracle Database ..";
+                break;
+        }
+
+        Log.i("Course", "Description :  " + desc);
+
+        CourseActivity a = (CourseActivity) getActivity();
+        a.setCourseDescription(desc);
+
+    }
+
+
+}
+
+fragment_course.xml
+=====================
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.st.demo.CoursesFragment">
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|top"
+        android:id="@+id/rgCourses">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Java"
+            android:checked="true"
+            android:id="@+id/rbJava" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Andriod"
+            android:id="@+id/rbAndroid" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oracle Database"
+            android:id="@+id/rbOracle" />
+    </RadioGroup>
+</FrameLayout>
+
+CourseDescriptionFragment.java
+================================
+package com.st.advancedtopics;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+public class CourseDescriptionFragment extends Fragment {
+
+    TextView tv;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("Course","OnCreateView()");
+        // Inflate the layout for this fragment
+        View  view =  inflater.inflate(R.layout.fragment_course_description, container,false);
+        return view;
+    }
+
+    public void setCourseDescription(String desc) {
+       tv = (TextView) getView().findViewById(R.id.tvDescription);
+       tv.setText(desc);
+    }
+}
+
+fragment_course_description.xml
+===============================
+package com.st.advancedtopics;
+
+import android.app.Fragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+public class CourseDescriptionFragment extends Fragment {
+
+    TextView tv;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("Course","OnCreateView()");
+        // Inflate the layout for this fragment
+        View  view =  inflater.inflate(R.layout.fragment_course_description, container,false);
+        return view;
+    }
+
+    public void setCourseDescription(String desc) {
+       tv = (TextView) getView().findViewById(R.id.tvDescription);
+       tv.setText(desc);
+    }
+}
+
+CourseActivity.java
+===================
+package com.st.advancedtopics;
+
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
+public class CourseActivity extends Activity {
+    CourseDescriptionFragment f;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_course);
+
+    }
+
+    public void setCourseDescription(String desc) {
+        f = (CourseDescriptionFragment) getFragmentManager().findFragmentById(R.id.courseDescFragment);
+        Log.i("Course","Got fragment : " + f);
+        f.setCourseDescription(desc);
+    }
+}
+
+activity_course.xml
+====================<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+tools:context="com.st.demo.FragmentsDemo">
+<fragment
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:name="com.st.advancedtopics.CoursesFragment"
+    android:layout_marginBottom="20dp"
+    android:id="@+id/coursesFragment" />
+
+<fragment
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:name="com.st.advancedtopics.CourseDescriptionFragment"
+    android:id="@+id/courseDescFragment"
+    android:layout_gravity="center_horizontal"
+    android:layout_weight="1"/>
+</LinearLayout>
+
+activity_course.xml (land)
+===========================
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="horizontal"
+tools:context="com.st.demo.FragmentsDemo">
+<fragment
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:name="com.st.advancedtopics.CoursesFragment"
+    android:layout_marginBottom="20dp"
+    android:id="@+id/coursesFragment" />
+
+<fragment
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:name="com.st.advancedtopics.CourseDescriptionFragment"
+    android:id="@+id/courseDescFragment"
+    android:layout_gravity="center_horizontal"
+    android:layout_weight="1"/>
+</LinearLayout>
+
+
